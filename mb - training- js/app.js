@@ -28,16 +28,18 @@ class Player {
     }
 
     update(){
-        context.clearRect(0,0,canvas.width, canvas.height);
         this.draw();
-        if (this.position.y + this.height <= canvas.height)
+
+        if (this.position.y + this.height + this.velocity.y <= canvas.height) {
             this.velocity.y += gravity;
+        }
         else {
-            this.position.y = canvas.height - this.height;
+            keys.up.pressed = false;
             this.velocity.y = 0;
             }
-        this.position.y += this.velocity.y;
-        this.position.x += this.velocity.x;
+
+            this.position.y += this.velocity.y;
+            this.position.x += this.velocity.x;
     }
 }
 
@@ -60,6 +62,7 @@ const keys = {
 
 function animate(){
     requestAnimationFrame(animate);
+    context.clearRect(0,0,canvas.width, canvas.height);
     player.update();
 
     if(keys.rigth.pressed){
@@ -68,8 +71,7 @@ function animate(){
         player.velocity.x = -9;
     } else player.velocity.x = 0;
 
-    if(keys.up.pressed){
-        player.velocity.y = -10;
+    if(keys.up.pressed){    
     } else player.velocity.y = 0;
 }
 
@@ -81,7 +83,10 @@ window.addEventListener('keydown',({keyCode}) => {
                 keys.left.pressed = true
                 break;
             case 87:
-                keys.up.pressed = true
+                if (!keys.up.pressed) {
+                    player.velocity.y = -40;
+                    keys.up.pressed = true
+                } 
                 break;
             case 68:
                 keys.rigth.pressed = true
@@ -96,9 +101,6 @@ window.addEventListener('keyup',({keyCode}) => {
     switch (keyCode) {
         case 65:
             keys.left.pressed = false
-            break;
-        case 87:
-            keys.up.pressed = false
             break;
         case 68:
             keys.rigth.pressed = false
